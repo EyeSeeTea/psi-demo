@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="ocks-org">
+<meta charset="utf-8">
+<title>SPI Demo Mind Gapper</title>
+<style>
+
+@import url(../resources/css/style.css?aea6f0a);
+
+#chart {
+  margin-left: -40px;
+  height: 506px;
+}
+
+text {
+  font: 10px sans-serif;
+}
+
+.dot {
+  stroke: #000;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.label {
+  fill: #777;
+}
+
+.year.label {
+  font: 500 196px "Helvetica Neue";
+  fill: #ddd;
+}
+
+.year.label.active {
+  fill: #aaa;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+  cursor: ew-resize;
+}
+
+</style>
+
+<header>
+  <aside>January 2015</aside>
+  Josele, Adrian & Asociados
+</header>
+
+<h1>PSI Demo Mind Gapper</h1>
+
+<p id="chart"></p>
+
+<aside>Mouseover the year to move forward and backwards through time.</aside>
+
+<p class="attribution">Source: <a href="https://github.com/RandomEtc/mind-gapper-js">Tom Carden</a>, <a href="http://gapminder.org">Gapminder</a>.</p>
+
+<script src="../resources/js/d3.v3.min.js"></script>
+<script>
+
+// Various accessors that specify the four dimensions of data to visualize.
+function x(d) { return d.xVariable; }
+function y(d) { return d.yVariable; }
+function radius(d) { return d.radiusVariable; }
+function color(d) { return d.colorVariable; }
+function key(d) { return d.name; }
+
+/////////////////////
+// Begin Constants //
+/////////////////////
+//Data Source
+var dataSource = "../resources/data/mindGapper/graphicDataComplete.json";
+//var dataSource = "../resources/data/mindGapper/graphicDataWithoutRadius.json";
+//var dataSource = "../resources/data/mindGapper/graphicDataWithoutRadiusAndColor.json";
+
+// Chart dimensions.
+var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
+    width = 960 - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// Range for axis and radius    
+var xRange = [0, width],
+    yRange = [height, 0],
+    radiusRange = [0, 40];
+    
+// Scale Types    
+var scaleTypes = {log: d3.scale.log(), linear: d3.scale.linear(), sqrt: d3.scale.sqrt(), category10: d3.scale.category10()};
+///////////////////
+// END Constants //
+///////////////////    
+    
+//////////////////////
+// BEGIN Parameters //
+//////////////////////
+// Axis Labels
+var xVariableMetadata = {name: "Life Expectancy (years)"},
+    yVariableMetadata = {name: "Income per capita, inflation-adjusted (dollars)"},
+    radiusVariableMetadata = {name: "Population"},
+    colorVariableMetadata = {name: "Region"};
+
+// Domain for Axis, Radius, Color and Time.
+//TODO: Podemos sacar el domain parseando los datos o una query?
+//TODO: Se puede extraer la escala de color?
+var xDomain = [300, 1e5],
+    xScaleType = scaleTypes.log;
+
+var yDomain = [10, 85],
+    yScaleType = scaleTypes.linear;
+    
+var radiusDomain = [0, 5e8],
+	radiusScaleType = scaleTypes.sqrt;
+	
+var colorScaleType = scaleTypes.category10;
+	
+var	timeDomain = [1800, 2009];
+	
+// Animation duration	
+var duration = 30000;	
+////////////////////
+// END Parameters //
+////////////////////
+
+// Various scales. These domains make assumptions of data, naturally.
+var xScale = xScaleType.domain(xDomain).range(xRange),
+    yScale = yScaleType.domain(yDomain).range(yRange),
+    radiusScale = radiusScaleType.domain(radiusDomain).range(radiusRange),
+    colorScale = colorScaleType;
+
+// The x & y axes.
+var xAxis = d3.svg.axis().orient("bottom").scale(xScale).ticks(12, d3.format(",d")),
+    yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+// Create the SVG container and set the origin.
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Add the x-axis.
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+// Add the y-axis.
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+
+// Add an x-axis label.
+svg.append("text")
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", width)
+    .attr("y", height - 6)
+    .text(yVariableMetadata.name);
+
+// Add a y-axis label.
+svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 6)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text(xVariableMetadata.name);
+
+// Add the year label; the value is set on transition.
+var label = svg.append("text")
+    .attr("class", "year label")
+    .attr("text-anchor", "end")
+    .attr("y", height - 24)
+    .attr("x", width)
+    .text(timeDomain[0]);
+
+// Load the data.
+d3.json(dataSource, function(graphicData) {
+
+  // A bisector since many data element's data is sparsely-defined.
+  var bisect = d3.bisector(function(d) { return d[0]; });
+
+  // Add a dot per data. Initialize the data at the beginning of the time range, and set the colors.
+  var dot = svg.append("g")
+      .attr("class", "dots")
+    .selectAll(".dot")
+      .data(interpolateData(timeDomain[0]))
+    .enter().append("circle")
+      .attr("class", "dot")
+      .style("fill", function(d) { return colorScale(color(d)); })
+      .call(position)
+      .sort(order);
+
+  // Add a title.
+  dot.append("title")
+      .text(function(d) { return d.name; });
+
+  // Add an overlay for the year label.
+  var box = label.node().getBBox();
+
+  var overlay = svg.append("rect")
+        .attr("class", "overlay")
+        .attr("x", box.x)
+        .attr("y", box.y)
+        .attr("width", box.width)
+        .attr("height", box.height)
+        .on("mouseover", enableInteraction);
+
+  // Start a transition that interpolates the data based on year.
+  svg.transition()
+      .duration(duration)
+      .ease("linear")
+      .tween("year", tweenYear)
+      .each("end", enableInteraction);
+
+  // Positions the dots based on data.
+  function position(dot) {
+    dot .attr("cx", function(d) { return xScale(x(d)); })
+        .attr("cy", function(d) { return yScale(y(d)); })
+        .attr("r", function(d) { return radiusScale(radius(d)); });
+  }
+
+  // Defines a sort order so that the smallest dots are drawn on top.
+  function order(a, b) {
+    return radius(b) - radius(a);
+  }
+
+  // After the transition finishes, you can mouseover to change the year.
+  function enableInteraction() {
+    var yearScale = d3.scale.linear()
+        .domain(timeDomain)
+        .range([box.x + 10, box.x + box.width - 10])
+        .clamp(true);
+
+    // Cancel the current transition, if any.
+    svg.transition().duration(0);
+
+    overlay
+        .on("mouseover", mouseover)
+        .on("mouseout", mouseout)
+        .on("mousemove", mousemove)
+        .on("touchmove", mousemove);
+
+    function mouseover() {
+      label.classed("active", true);
+    }
+
+    function mouseout() {
+      label.classed("active", false);
+    }
+
+    function mousemove() {
+      displayYear(yearScale.invert(d3.mouse(this)[0]));
+    }
+  }
+
+  // Tweens the entire chart by first tweening the year, and then the data.
+  // For the interpolated data, the dots and label are redrawn.
+  function tweenYear() {
+    var year = d3.interpolateNumber(timeDomain[0], timeDomain[1]);
+    return function(t) { displayYear(year(t)); };
+  }
+
+  // Updates the display to show the specified year.
+  function displayYear(year) {
+    dot.data(interpolateData(year), key).call(position).sort(order);
+    label.text(Math.round(year));
+  }
+
+  // Interpolates the dataset for the given (fractional) year.
+  function interpolateData(year) {
+    return graphicData.map(function(d) {
+    	var element = {
+	        name: d.name,
+	        xVariable: interpolateValues(d.xVariable, year),
+	        yVariable: interpolateValues(d.yVariable, year)
+	      };
+
+		//RADIUS
+	    if (d.radiusVariable == undefined){
+	    	element["radiusVariable"] = (radiusDomain[0] + radiusDomain[1])/2;
+	    }
+	    else{
+	    	element["radiusVariable"] = interpolateValues(d.radiusVariable, year);
+	    }
+	    
+	    //COLOR VARIABLE
+	    if (d.radiusVariable == undefined){
+	    	element["colorVariable"] = "Default";
+	    }
+	    else{
+	    	element["colorVariable"] = d.colorVariable;
+	    }
+	       
+      	return element; 
+    });
+  }
+
+  // Finds (and possibly interpolates) the value for the specified year.
+  function interpolateValues(values, year) {
+    var i = bisect.left(values, year, 0, values.length - 1),
+        a = values[i];
+    if (i > 0) {
+      var b = values[i - 1],
+          t = (year - a[0]) / (b[0] - a[0]);
+      return a[1] * (1 - t) + b[1] * t;
+    }
+    return a[1];
+  }
+});
+
+</script>
+

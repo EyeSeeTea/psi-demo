@@ -1,0 +1,18 @@
+{
+    "numberofDataValues": 15556,
+    "countries": [
+        {
+            "id": "dataSetsEtiopia",
+            "name": "Etiopia"            
+        },
+        {
+            "id": "dataSetsKenya",
+            "name": "Kenya"            
+        },
+        {
+            "id": "dataSetsSenegal",
+            "name": "Senegal"            
+        }
+        
+    ]
+}

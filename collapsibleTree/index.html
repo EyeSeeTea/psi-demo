@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Force-Directed Graph</title>
+<style>
+
+.node {
+  cursor: pointer;
+  stroke: #3182bd;
+  stroke-width: 1.5px;
+}
+
+.link {
+  fill: none;
+  stroke: #9ecae1;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+</style>
+<body>
+<script src="../resources/js/d3.v3.min.js"></script>
+<script src="../resources/js/jquery-1.11.1.min.js"></script>
+<script>
+
+var width = 960,
+    height = 500,
+    root;
+
+var force = d3.layout.force()
+    .size([width, height])
+    .on("tick", tick);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var link = svg.selectAll(".link"),
+    node = svg.selectAll(".node"),
+    groups  = svg.selectAll(".groups");
+    
+var countriesPath = "/resources/data/collapsibleTree/countries/";
+var dataSetsPath = "/resources/data/collapsibleTree/countries/dataSets/";
+var dataElementsPath = "/resources/data/collapsibleTree/countries/dataSets/dataElements/";  
+
+d3.json("/resources/data/collapsibleTree/root.json", function(json) {
+  root = json;
+  update();
+});
+
+function update() {
+  var nodes = flatten(root),
+      links = d3.layout.tree().links(nodes);
+
+  // Restart the force layout.
+  force
+      .nodes(nodes)
+      .links(links)
+      .linkDistance(40)
+      .start();
+
+  // Update the links…
+  link = link.data(links, function(d) { console.log("update"+d.target.id);return d.target.id; });
+
+  // Exit any old links.
+  link.exit().remove();
+
+  // Enter any new links.
+  link.enter().insert("line", ".groups")
+      .attr("class", "link")
+      .attr("x1", function(d) { console.log(d.source);return d.source.x; })
+      .attr("y1", function(d) { console.log(d.source);return d.source.y; })
+      .attr("x2", function(d) { console.log(d.target);return d.target.x; })
+      .attr("y2", function(d) { console.log(d.target);return d.target.y; });
+
+  // Update the nodes…
+  node = node.data(nodes, function(d) {return d.id;}).style("fill", color);
+
+  // Exit any old nodes.
+  node.exit().remove();
+
+  // Enter any new nodes.
+  groups = node.enter()
+  	  .append("g")
+  	  .attr("class", "groups")
+      .on("click", click)
+      .call(force.drag);
+         
+  groups.append("circle")
+      .attr("class", "node")
+      // .attr("cx", function(d) { return d.x; })
+      // .attr("cy", function(d) { return d.y; })
+      .attr("r", function(d) {return Math.sqrt(d.numberofDataValues) / 10 || 4.5; })
+      .style("fill", color);    
+      
+  // Enter text 
+  groups.append("text")
+    .attr("dx", 12)
+    .attr("dy", ".35em")
+    .text(function(d) {console.log(d.id);return d.id; });   
+}
+
+function tick() {
+  link.attr("x1", function(d) {return d.source.x; })
+      .attr("y1", function(d) {return d.source.y; })
+      .attr("x2", function(d) {return d.target.x; })
+      .attr("y2", function(d) {return d.target.y; });
+
+  // node.attr("cx", function(d) { return d.x; })
+      // .attr("cy", function(d) { return d.y; });
+      
+  groups.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+}
+
+// Color leaf nodes orange, and packages white or blue.
+function color(d) {
+  return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+}
+
+// Toggle children on click.
+function click(d) {
+  if (!d3.event.defaultPrevented) {
+    if (d.children) {
+      d._children = d.children;
+      d.children = null;
+    } else {
+       d.children = getChildren(d);
+      d._children = null;
+    }
+    update();
+  }
+}
+
+// Returns a list of all nodes under the root.
+function flatten(root) {
+  var nodes = [], i = 0;
+
+  function recurse(node) {
+    if (node.children) node.children.forEach(recurse);
+    if (!node.id) node.id = ++i;
+    nodes.push(node);
+  }
+
+  recurse(root);
+  return nodes;
+}
+
+function getFiles(childrenPointers, path){
+	var children =  [];
+	for (var i=0; i < childrenPointers.length; i++) {
+		$.ajax({
+		  url: path + childrenPointers[i].id + ".json",
+		  async: false,
+		  dataType: 'json',
+		  success: function (response) {
+		  	children.push(response);
+		  }
+		});
+	};
+	if (children.length == 0) children = null;
+	return children;
+}
+
+function getChildren(node){
+	var children = null;
+	if (node._children != undefined){
+		children = node._children;
+	}
+	else if (node.countries != undefined){
+		children=getFiles(node.countries, countriesPath);
+	}
+	else if (node.dataSets != undefined){
+		children=getFiles(node.dataSets, dataSetsPath);
+	}
+	else if (node.dataElements != undefined){
+		children=getFiles(node.dataElements, dataElementsPath);
+	}
+	return children;
+}
+
+</script>

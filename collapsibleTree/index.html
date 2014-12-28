@@ -42,9 +42,10 @@ var link = svg.selectAll(".link"),
     node = svg.selectAll(".node"),
     groups  = svg.selectAll(".groups");
     
-var countriesPath = "/resources/data/collapsibleTree/countries/";
-var dataSetsPath = "/resources/data/collapsibleTree/countries/dataSets/";
-var dataElementsPath = "/resources/data/collapsibleTree/countries/dataSets/dataElements/";  
+var collapsibleTreePath= "/resources/data/collapsibleTree/";    
+// var countriesPath = "/resources/data/collapsibleTree/countries/";
+// var dataSetsPath = "/resources/data/collapsibleTree/countries/dataSets/";
+// var dataElementsPath = "/resources/data/collapsibleTree/countries/dataSets/dataElements/";  
 
 d3.json("/resources/data/collapsibleTree/root.json", function(json) {
   root = json;
@@ -93,13 +94,13 @@ function update() {
           
    groups.append("circle")
        .attr("class", "node")
-       .attr("r", function(d) {return Math.sqrt(d.numberofDataValues) / 10 || 4.5; });    
+       .attr("r", function(d) {return Math.sqrt(d.numberDataValues) / 40 || 4.5; });    
        
    // Enter text 
    groups.append("text")
      .attr("dx", 12)
      .attr("dy", ".35em")
-     .text(function(d) {return d.id;});   
+     .text(function(d) {if (d.name){return d.name;}else{return d.id;}});   
 }
 
 function tick() {
@@ -140,13 +141,14 @@ function click(d) {
   }
 }
 
+var nodeId = 0;
 // Returns a list of all nodes under the root.
 function flatten(root) {
-  var nodes = [], i = 0;
+  var nodes = []; 
 
   function recurse(node) {
     if (node.children) node.children.forEach(recurse);
-    if (!node.id) node.id = ++i;
+    if (!node.id) node.id = ++nodeId;
     nodes.push(node);
   }
 
@@ -154,18 +156,22 @@ function flatten(root) {
   return nodes;
 }
 
-function getFiles(childrenPointers, path){
+function getFiles(childrenPointers){
 	var children =  [];
-	for (var i=0; i < childrenPointers.length; i++) {
-		$.ajax({
-		  url: path + childrenPointers[i].id + ".json",
-		  async: false,
-		  dataType: 'json',
-		  success: function (response) {
-		  	children.push(response);
-		  }
-		});
-	};
+	if (childrenPointers){
+		for (var i=0; i < childrenPointers.length; i++) {
+				
+			$.ajax({
+			  //url: collapsibleTreePath + childrenPointers[i].href.match("psi-mis.org/api/(.*)/")[1] + "/" + childrenPointers[i].id + ".json",
+			  url: collapsibleTreePath + childrenPointers[i].id + ".json",
+			  async: false,
+			  dataType: 'json',
+			  success: function (response) {
+			  	children.push(response);
+			  }
+			});
+		};
+	}
 	if (children.length == 0) children = null;
 	return children;
 }
@@ -175,14 +181,8 @@ function getChildren(node){
 	if (node._children != undefined){
 		children = node._children;
 	}
-	else if (node.countries != undefined){
-		children=getFiles(node.countries, countriesPath);
-	}
-	else if (node.dataSets != undefined){
-		children=getFiles(node.dataSets, dataSetsPath);
-	}
-	else if (node.dataElements != undefined){
-		children=getFiles(node.dataElements, dataElementsPath);
+	else{
+		children=getFiles(node.childNodes);
 	}
 	return children;
 }

@@ -1,0 +1,40 @@
+{
+	"id": "eO2E0jRA45w",
+	"name": "KE - Tunza IMCI",
+	"shortName": "KE - Tunza IMCI",
+	"numberdataelements": 5,
+	"numberDataValues": 15180,
+	"childNodes": [
+		{
+			"id": "iiRT6yWvwxh",
+			"name": "KE Tunza - Treated for Diarrhea with ORS & Zinc",
+			"created": "2013-06-30T10:57:11.169+0000",
+			"lastUpdated": "2013-06-30T10:57:11.169+0000",
+			"href": "https://www.psi-mis.org/api/dataElements/iiRT6yWvwxh"
+		}, {
+			"id": "cNkpcJ076bs",
+			"name": "KE Tunza - Treated for Malaria with ACT",
+			"created": "2013-06-30T10:57:45.527+0000",
+			"lastUpdated": "2013-06-30T10:57:45.527+0000",
+			"href": "https://www.psi-mis.org/api/dataElements/cNkpcJ076bs"
+		}, {
+			"id": "QVTy4JShjLK",
+			"name": "KE Tunza - Treated for Diarrhea",
+			"created": "2013-06-30T10:56:56.163+0000",
+			"lastUpdated": "2013-06-30T10:56:56.163+0000",
+			"href": "https://www.psi-mis.org/api/dataElements/QVTy4JShjLK"
+		}, {
+			"id": "bQww5zzYFwk",
+			"name": "KE Tunza - Treated for Pneumonia",
+			"created": "2013-06-30T10:58:00.527+0000",
+			"lastUpdated": "2013-06-30T10:58:00.527+0000",
+			"href": "https://www.psi-mis.org/api/dataElements/bQww5zzYFwk"
+		}, {
+			"id": "bDd8X4HmHNH",
+			"name": "KE Tunza - Treated for Diarrhea with ORS",
+			"created": "2013-06-30T10:57:29.812+0000",
+			"lastUpdated": "2013-06-30T10:57:29.812+0000",
+			"href": "https://www.psi-mis.org/api/dataElements/bDd8X4HmHNH"
+		}
+	]
+}

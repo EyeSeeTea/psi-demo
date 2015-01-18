@@ -1,34 +1,24 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>Force-Directed Graph</title>
-<style>
+<title>Collapsible Tree Graph</title>
 
-.node {
-  cursor: pointer;
-  stroke: #3182bd;
-  stroke-width: 1.5px;
-}
-
-.link {
-  fill: none;
-  stroke: #9ecae1;
-  stroke-width: 1.5px;
-}
-
-.node text {
-  pointer-events: none;
-  font: 10px sans-serif;
-}
-
-</style>
 <body>
+<link rel="stylesheet" type="text/css" href="../resources/css/collapsibleTree.css">
+	
 <script src="../resources/js/d3.v3.min.js"></script>
 <script src="../resources/js/jquery-1.11.1.min.js"></script>
+<script src="../resources/js/d3Utils.js"></script>
+<script src="../resources/js/d3.tip.v0.6.3.js"></script>
 <script>
 
 var width = 960,
-    height = 500,
+    height = 600,
     root;
+
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(getTipContent);
 
 var force = d3.layout.force()
     .size([width, height])
@@ -37,17 +27,19 @@ var force = d3.layout.force()
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
+    
+svg.call(tip);
 
 var link = svg.selectAll(".link"),
     node = svg.selectAll(".node"),
     groups  = svg.selectAll(".groups");
     
-var collapsibleTreePath= "/resources/data/collapsibleTree/";    
-// var countriesPath = "/resources/data/collapsibleTree/countries/";
-// var dataSetsPath = "/resources/data/collapsibleTree/countries/dataSets/";
-// var dataElementsPath = "/resources/data/collapsibleTree/countries/dataSets/dataElements/";  
+// var collapsibleTreePath = "/resources/data/collapsibleTree/";
+var collapsibleTreePath = "/resources/data/dataElementsGroups/";
+var rootFile = "root.json";
 
-d3.json("/resources/data/collapsibleTree/root.json", function(json) {
+d3.json(collapsibleTreePath + rootFile, function(error, json) {
+  if (error) return console.warn(error);
   root = json;
   update();
 });
@@ -89,8 +81,10 @@ function update() {
   	   .append("g")
   	   .attr("class", "groups")
   	   .style("fill", color)
-       .on("click", click)
-       .call(force.drag);
+       .on("click", collapsibleTreeClick)
+       .call(force.drag)
+       .on("mouseover", showTip)
+      .on("mouseout", tip.hide);
           
    groups.append("circle")
        .attr("class", "node")
@@ -112,79 +106,19 @@ function tick() {
   node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 }
 
-// Color leaf nodes orange, and packages white or blue.
-function color(d) {
-	var color;
-	if (d.children === null && d._children === null){
-		color = "#fd8d3c";
-	}
-	else if ((d._children != undefined && d._children != null) || (d._children === undefined && d.children === undefined)){
-		color = "#3182bd";
-	}
-	else if (d.children != undefined && d.children != null){
-		color = "#c6dbef";
-	}
-	return color;
-}
-
-// Toggle children on click.
-function click(d) {
-  if (!d3.event.defaultPrevented) {
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-       d.children = getChildren(d);
-      d._children = null;
-    }
-    update();
-  }
-}
 
 var nodeId = 0;
-// Returns a list of all nodes under the root.
+//Returns a list of all nodes under the root.
 function flatten(root) {
-  var nodes = []; 
+var nodes = []; 
 
-  function recurse(node) {
-    if (node.children) node.children.forEach(recurse);
-    if (!node.id) node.id = ++nodeId;
-    nodes.push(node);
-  }
-
-  recurse(root);
-  return nodes;
+function recurse(node) {
+ if (node.children) node.children.forEach(recurse);
+ if (!node.id) node.id = ++nodeId;
+ nodes.push(node);
 }
 
-function getFiles(childrenPointers){
-	var children =  [];
-	if (childrenPointers){
-		for (var i=0; i < childrenPointers.length; i++) {
-				
-			$.ajax({
-			  //url: collapsibleTreePath + childrenPointers[i].href.match("psi-mis.org/api/(.*)/")[1] + "/" + childrenPointers[i].id + ".json",
-			  url: collapsibleTreePath + childrenPointers[i].id + ".json",
-			  async: false,
-			  dataType: 'json',
-			  success: function (response) {
-			  	children.push(response);
-			  }
-			});
-		};
-	}
-	if (children.length == 0) children = null;
-	return children;
+recurse(root);
+return nodes;
 }
-
-function getChildren(node){
-	var children = null;
-	if (node._children != undefined){
-		children = node._children;
-	}
-	else{
-		children=getFiles(node.childNodes);
-	}
-	return children;
-}
-
 </script>

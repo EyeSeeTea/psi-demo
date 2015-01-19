@@ -1,1 +1,27 @@
-{"id":"zk0i3EYG0vL","name":"SN Marketing - Number of outlets visited","numberDataValues":440, "lastUpdated":"2014-08-08T06:24:33.924+0000","shortName":"Nb Outlets visited","zeroIsSignificant":true,"aggregationOperator":"sum","description":"Number of outlets visited by promoter and by type","type":"int","categoryCombo":{"id":"RAKIg1TdHDD","name":"SN - Promoteurs et Type de visite","created":"2014-01-16T11:40:30.028+0000","lastUpdated":"2014-01-16T11:40:30.059+0000","href":"https://www.psi-mis.org/api/categoryCombos/RAKIg1TdHDD"},"dataElementGroups":[{"id":"k3S5MgrLduC","name":"SN - Marketing Aggregate Data","created":"2014-05-13T23:09:34.543+0000","lastUpdated":"2014-08-08T06:31:04.539+0000","href":"https://www.psi-mis.org/api/dataElementGroups/k3S5MgrLduC"}]}
+{
+	"id": "zk0i3EYG0vL",
+	"name": "SN Marketing - Number of outlets visited",
+	"numberDataValues": 440,
+	"lastUpdated": "2014-08-08T06:24:33.924+0000",
+	"shortName": "Nb Outlets visited",
+	"zeroIsSignificant": true,
+	"aggregationOperator": "sum",
+	"description": "Number of outlets visited by promoter and by type",
+	"type": "int",
+	"categoryCombo": {
+		"id": "RAKIg1TdHDD",
+		"name": "SN - Promoteurs et Type de visite",
+		"created": "2014-01-16T11:40:30.028+0000",
+		"lastUpdated": "2014-01-16T11:40:30.059+0000",
+		"href": "https://www.psi-mis.org/api/categoryCombos/RAKIg1TdHDD"
+	},
+	"dataElementGroups": [
+		{
+			"id": "k3S5MgrLduC",
+			"name": "SN - Marketing Aggregate Data",
+			"created": "2014-05-13T23:09:34.543+0000",
+			"lastUpdated": "2014-08-08T06:31:04.539+0000",
+			"href": "https://www.psi-mis.org/api/dataElementGroups/k3S5MgrLduC"
+		}
+	]
+}

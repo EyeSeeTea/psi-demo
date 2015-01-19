@@ -74,6 +74,14 @@ function getTipContent(d) {
 	return content;
 }
 
+function calculateTextPosition(d){
+	return calculateRadius(d) + 8;
+}
+
+function calculateRadius(d) {
+	return Math.sqrt(d.numberDataValues) / 20 || 4.5; 
+}
+
 //Color leaf nodes orange, and packages white or blue.
 function color(d) {
 	var color;

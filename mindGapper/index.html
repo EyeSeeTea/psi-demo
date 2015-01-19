@@ -95,11 +95,6 @@ var xRange = [0, width],
 // BEGIN Parameters //
 //////////////////////
 // Axis Labels
-// var xVariableMetadata = {name: "Life Expectancy (years)"},
-    // yVariableMetadata = {name: "Income per capita, inflation-adjusted (dollars)"},
-    // radiusVariableMetadata = {name: "Population"},
-    // colorVariableMetadata = {name: "Region"};
-
 var xVariableMetadata = {name: "Data Values Inserted", key: "datavaluesinserted"},
     yVariableMetadata = {name: "Data Elements", key: "dataelements"},
     radiusVariableMetadata = {name: "Data Values", key: "datavalues"},
@@ -110,7 +105,6 @@ var xVariableMetadata = {name: "Data Values Inserted", key: "datavaluesinserted"
 //TODO: Podemos sacar el domain parseando los datos o una query?
 //TODO: Se puede extraer la escala de color?
 var xDomain = [1110, 600000],
-    //xScaleType = scaleTypes.log;
     xScaleType = d3.scale.linear();
 
 var yDomain = [1, 155],
@@ -190,9 +184,6 @@ d3.json(dataSource, function(json) {
 
   var graphicData = convertJsonToGraphicData(json);
 
-  // A bisector since many data element's data is sparsely-defined.
-  // var bisect = d3.bisector(function(d) { return d[0]; });
-
   // Add a dot per data. Initialize the data at the beginning of the time range, and set the colors.
   var dot = svg.append("g")
       .attr("class", "dots")
@@ -216,15 +207,15 @@ d3.json(dataSource, function(json) {
         .attr("x", box.x)
         .attr("y", box.y)
         .attr("width", box.width)
-        .attr("height", box.height);
-        // .on("mouseover", enableInteraction);
+        .attr("height", box.height)
+        .on("mouseover", enableInteraction);
 
   // Start a transition that interpolates the data based on year.
   svg.transition()
       .duration(duration)
       .ease("linear")
-      .tween("year", tweenYear);
-      // .each("end", enableInteraction);
+      .tween("year", tweenYear)
+      .each("end", enableInteraction);
 
   // Positions the dots based on data.
   function position(dot) {
@@ -263,7 +254,7 @@ d3.json(dataSource, function(json) {
     }
 
     function mousemove() {
-      displayYear(yearScale.invert(d3.mouse(this)[0]));
+      displayYear(Math.ceil(yearScale.invert(d3.mouse(this)[0])));
     }
   }
 
@@ -278,11 +269,13 @@ d3.json(dataSource, function(json) {
 
   // Updates the display to show the specified year.
   function displayYear(year) {
-    // dot.data(interpolateData(year), key).call(position).sort(order);
-    // label.text(Math.round(year));
     var item = interpolateData(year);
     dot.data(item, key).call(position).sort(order);
-    label.text(item[0].year);
+    label.text(formatDate(item[0].year));
+  }
+  
+  function formatDate(date){
+  	return date.substring(date.length - 2) + "/" + date.substring(0,4); 
   }
 
   function convertJsonToGraphicData(json){

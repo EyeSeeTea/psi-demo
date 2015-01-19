@@ -1,5 +1,5 @@
 html {
-  min-width: 1040px;
+  min-width: 1024px;
 }
 
 .ocks-org body {
@@ -79,7 +79,6 @@ footer {
 
 h1 ~ aside {
   font-size: small;
-  right: 0;
   position: absolute;
   width: 180px;
 }

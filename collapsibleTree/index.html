@@ -10,7 +10,7 @@
 <script src="../resources/js/d3Utils.js"></script>
 <script src="../resources/js/d3.tip.v0.6.3.js"></script>
 <script>
-// JUST TO LET KNOW THE PARENT IFRAME IS READY
+// LET KNOW THE PARENT THAT IFRAME DOM IS READY
 $(function(){
     parent.iframeLoaded();
 });
@@ -56,7 +56,7 @@ function update() {
   force
       .nodes(nodes)
       .links(links)
-      .linkDistance(40)
+      .linkDistance(120)
       .charge(-400)
       .start();
 
@@ -92,13 +92,13 @@ function update() {
           
    groups.append("circle")
        .attr("class", "node")
-       .attr("r", function(d) {return Math.sqrt(d.numberDataValues) / 40 || 4.5; });    
+       .attr("r", calculateRadius);    
        
    // Enter text 
    groups.append("text")
-     .attr("dx", 12)
+     .attr("dx", calculateTextPosition)
      .attr("dy", ".35em")
-     .text(function(d) {if (d.name){return d.name;}else{return d.id;}});   
+     .text(getLabel);   
 }
 
 function tick() {

@@ -13,7 +13,7 @@ function getFiles(childrenPointers){
 	if (childrenPointers){
 		for (var i=0; i < childrenPointers.length; i++) {
 			$.ajax({
-			  url: collapsibleTreePath + childrenPointers[i].id + ".json",
+			  url: path + childrenPointers[i].id + ".json",
 			  async: false,
 			  dataType: 'json',
 			  success: function (response) {

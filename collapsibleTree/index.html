@@ -10,8 +10,13 @@
 <script src="../resources/js/d3Utils.js"></script>
 <script src="../resources/js/d3.tip.v0.6.3.js"></script>
 <script>
+// JUST TO LET KNOW THE PARENT IFRAME IS READY
+$(function(){
+    parent.iframeLoaded();
+});
+var path;
 
-var width = 960,
+var width = 860,
     height = 600,
     root;
 
@@ -34,15 +39,14 @@ var link = svg.selectAll(".link"),
     node = svg.selectAll(".node"),
     groups  = svg.selectAll(".groups");
     
-// var collapsibleTreePath = "/resources/data/collapsibleTree/";
-var collapsibleTreePath = "/resources/data/dataElementsGroups/";
-var rootFile = "root.json";
-
-d3.json(collapsibleTreePath + rootFile, function(error, json) {
-  if (error) return console.warn(error);
-  root = json;
-  update();
-});
+function init(resourcesPath, resourcesName){
+	path = resourcesPath;
+	d3.json(path + resourcesName, function(error, json) {
+	  if (error) return console.warn(error);
+	  root = json;
+	  update();
+	});
+}
 
 function update() {
   var nodes = flatten(root),

@@ -10,16 +10,67 @@
 
 <h1>PSI Demo</h1>
 
-<p>
+<!-- <p>
 	<ul>
 		<li><a href="mindGapper/index.html">Go to MindGapper Demo</a></li>
 		<li><a href="tree/index.html">Go to Tree Demo</a></li>
 		<li><a href="collapsibleTree/index.html">Go to Collapsible Tree Demo</a></li>
 		<li><a href="fixCollapsibleTree/index.html">Go to Fix Collapsible Tree Demo</a></li>
 	</ul>
-</p>
+</p> -->
+<script src="../resources/js/jquery-1.11.1.min.js"></script>
+<script>
+$(document).ready(function(){
+	$("#button").click(function () { 
+	    $("#frame").attr("src", $("#graphType").find(':selected').val() + "/index.html");
+	});
+	$("#graphType").change(function() {
+		$("#dataSet").empty();
+		var options = '';
+        if ($(this).find(':selected').val() === 'mindGapper') {
+            options += "<option value='/resources/data/mindGapper/Kenya.json'>Metadata</option>";
+        } else {
+            options += "<option value='/resources/data/dataElementsGroups/root.json'>Data Elements Groups</option>";
+            options += "<option value='/resources/data/collapsibleTree/root.json'>Countries</option>";
+        }
+        $("#dataSet").append(options);
+ 	    $("#dataSet").trigger('chosen:updated');
+    });
+		
+});
+function iframeLoaded(){
+	var dataSetPath= $("#dataSet").find(':selected').val();
+	var path = dataSetPath.substring(0, dataSetPath.lastIndexOf("/") + 1);
+	var name = dataSetPath.substring(dataSetPath.lastIndexOf("/") + 1, dataSetPath.length);
+	document.getElementById("frame").contentWindow.init(path, name);
+}	
+</script>
 
+<div id="menu" style="margin-bottom: 20px;border:2px inset;padding: 10px;">
 
+<div id="graphTypeMenu" style="display:inline-block;">
+	Select Graph Type:	
+	<select name="graphType" id="graphType">
+	  <option value=""></option>
+	  <option value="collapsibleTree">Collapsible Tree</option>
+	  <option value="fixCollapsibleTree">Fix Collapsible Tree</option>
+	  <option value="mindGapper">Dynamic Tree</option>
+	</select>
+</div>
+
+<div id="dataSetMenu" style="display:inline-block">
+	Select Dataset:	
+	<select name="dataSet" id="dataSet">
+	</select>
+</div>    
+	
+<button id="button">Load</button>
+
+</div>
+<div id="mydiv">
+	<iframe id="frame" src="" width="100%" height="800"></iframe>
+</div>
+  
 
 <footer>
   <aside>January 2015</aside>

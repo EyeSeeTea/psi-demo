@@ -11,8 +11,14 @@
 <script src="../resources/js/d3.tip.v0.6.3.js"></script>
 
 <script>
+// LET KNOW THE PARENT THAT IFRAME DOM IS READY
+$(function(){
+    parent.iframeLoaded();
+});
+var path;
+
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
-    width = 960 - margin.right - margin.left,
+    width = 860 - margin.right - margin.left,
     height = 650 - margin.top - margin.bottom,
     root,
     duration = 750,
@@ -41,14 +47,17 @@ svg.call(tip);
 var collapsibleTreePath = "/resources/data/dataElementsGroups/";
 var rootFile = "root.json";
 
-d3.json(collapsibleTreePath + rootFile, function(error, json) {
-  if (error) return console.warn(error);
-  root = json;
-  root.x0 = height /2;
-  root.y0 = 0;
-  
-  update();
-});
+function init(resourcesPath, resourcesName){
+	path = resourcesPath;
+	d3.json(path + resourcesName, function(error, json) {
+	  if (error) return console.warn(error);
+	  root = json;
+	  root.x0 = height /2;
+	  root.y0 = 0;
+	  
+	  update();
+	});
+}
 
 function update() {
   // Compute the new tree layout.

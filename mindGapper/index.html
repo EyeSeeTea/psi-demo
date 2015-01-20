@@ -63,13 +63,14 @@ text {
 function x(d) { return d.xVariable; }
 function y(d) { return d.yVariable; }
 function radius(d) { return d.radiusVariable; }
-function color(d) { return d.colorVariable; }
+function color(d) { return Math.ceil(d.colorVariable/200); }
 function key(d) { return d.name; }
 
 /////////////////////
 // Begin Constants //
 /////////////////////
 //Data Source
+//TODO: dataSource should be sent by parent web (index.html) and add a init function
 var dataSource = "../resources/data/mindGapper/Kenya.json";
 // var dataSource = "../resources/data/mindGapper/graphicDataComplete.json";
 //var dataSource = "../resources/data/mindGapper/graphicDataWithoutRadius.json";
@@ -85,8 +86,6 @@ var xRange = [0, width],
     yRange = [height, 0],
     radiusRange = [0, 40];
     
-// Scale Types    
-//var scaleTypes = {log: d3.scale.log(), linear: d3.scale.linear(), sqrt: d3.scale.sqrt(), category10: d3.scale.category10()};
 ///////////////////
 // END Constants //
 ///////////////////    
@@ -100,7 +99,6 @@ var xVariableMetadata = {name: "Data Values Inserted", key: "datavaluesinserted"
     radiusVariableMetadata = {name: "Data Values", key: "datavalues"},
     colorVariableMetadata = {name: "Organisation Units", key: "organisationunits"};
 
-
 // Domain for Axis, Radius, Color and Time.
 //TODO: Podemos sacar el domain parseando los datos o una query?
 //TODO: Se puede extraer la escala de color?
@@ -113,7 +111,7 @@ var yDomain = [1, 155],
 var radiusDomain = [17000, 30000],
 	radiusScaleType = d3.scale.linear();
 	
-var colorScaleType = d3.scale.category10();
+var colorScaleType = d3.scale.category20c().domain(d3.range(0,20));
 	
 //var	timeDomain = [201304, 201406];
 var	timeDomain = [1,14];
@@ -125,7 +123,6 @@ var duration = 20000;
 ////////////////////
 
 // Various scales. These domains make assumptions of data, naturally.
-//var xScale = xScaleType.domain(xDomain).range(xRange),
 var xScale = xScaleType.domain(xDomain).range(xRange),
     yScale = yScaleType.domain(yDomain).range(yRange),
     radiusScale = radiusScaleType.domain(radiusDomain).range(radiusRange),
@@ -191,7 +188,8 @@ d3.json(dataSource, function(json) {
       .data(interpolateData(timeDomain[0]))
     .enter().append("circle")
       .attr("class", "dot")
-      .style("fill", function(d) { return colorScale(color(d)); })
+      .style("fill", function(d) {
+      	return colorScale(color(d)); })
       .call(position)
       .sort(order);
 
@@ -270,7 +268,7 @@ d3.json(dataSource, function(json) {
   // Updates the display to show the specified year.
   function displayYear(year) {
     var item = interpolateData(year);
-    dot.data(item, key).call(position).sort(order);
+    dot.data(item, key).call(position).sort(order).style("fill", function(d) {return colorScale(color(d)); });
     label.text(formatDate(item[0].year));
   }
   
@@ -301,7 +299,6 @@ d3.json(dataSource, function(json) {
   			graphicData[key].push(newitem);	
   		}
   	}
-  	// console.log(graphicData);
   	return graphicData;
   }
 

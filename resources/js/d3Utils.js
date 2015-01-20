@@ -71,6 +71,15 @@ function getTipContent(d) {
 	if (d.description != undefined){
 		content += "<p>Description: <span style='color:red'>" + d.description + "</span></p>";
 	}
+	if (d.lastUpdated != undefined){
+		content += "<p>Last Updated: <span style='color:red'>" + d.lastUpdated + "</span></p>";
+	}
+	if (d.aggregationOperator != undefined){
+		content += "<p>Aggregation Operator: <span style='color:red'>" + d.aggregationOperator + "</span></p>";
+	}
+	if (d.type != undefined){
+		content += "<p>Type: <span style='color:red'>" + d.type + "</span></p>";
+	}
 	if (content == ""){
 		content += "<span style='color:red'>Node:</span> " + getLabel(d);
 	}

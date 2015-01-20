@@ -64,7 +64,6 @@ function update() {
    var nodes = tree.nodes(root).reverse(),
       links = tree.links(nodes);
 
-
   // Normalize for fixed-depth.
   nodes.forEach(function(d) { d.y = d.depth * 180; });
 

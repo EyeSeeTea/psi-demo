@@ -85,10 +85,10 @@ function update() {
   	   .append("g")
   	   .attr("class", "groups")
   	   .style("fill", color)
+  	   .on("mouseover", showTip)
+       .on("mouseout", tip.hide)
        .on("click", collapsibleTreeClick)
-       .call(force.drag)
-       .on("mouseover", showTip)
-      .on("mouseout", tip.hide);
+       .call(force.drag);
           
    groups.append("circle")
        .attr("class", "node")

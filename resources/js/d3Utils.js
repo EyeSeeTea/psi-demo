@@ -58,19 +58,23 @@ function collapsibleTreeClick(d) {
 }
 
 function showTip(d){
-	if (d.isAFinalNode){
+//	if (d.isAFinalNode){
 		tip.show(d);
-	}	
+//	}	
 }
 
 function getTipContent(d) {
 	var content = "";
+	if (d.numberDataValues != undefined){
+		content += "<p>Number of DataValues: <span style='color:red'>" + d.numberDataValues + "</span></p>";
+	}
 	if (d.description != undefined){
-		content = "Description: <span style='color:red'>" + d.description + "</span>";
+		content += "<p>Description: <span style='color:red'>" + d.description + "</span></p>";
 	}
-	else{
-		content = "Number of DataValues: <span style='color:red'>" + d.numberDataValues + "</span>";
+	if (content == ""){
+		content += "<span style='color:red'>Node:</span> " + getLabel(d);
 	}
+	
 	return content;
 }
 
@@ -79,7 +83,8 @@ function calculateTextPosition(d){
 }
 
 function calculateRadius(d) {
-	return Math.sqrt(d.numberDataValues) / 20 || 4.5; 
+	//return Math.sqrt(d.numberDataValues) / 20 || 4.5;
+	return Math.sqrt(d.numberDataValues) / 20 || 0;
 }
 
 //Color leaf nodes orange, and packages white or blue.

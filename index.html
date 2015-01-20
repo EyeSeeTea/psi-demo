@@ -10,19 +10,15 @@
 
 <h1>PSI Demo</h1>
 
-<!-- <p>
-	<ul>
-		<li><a href="mindGapper/index.html">Go to MindGapper Demo</a></li>
-		<li><a href="tree/index.html">Go to Tree Demo</a></li>
-		<li><a href="collapsibleTree/index.html">Go to Collapsible Tree Demo</a></li>
-		<li><a href="fixCollapsibleTree/index.html">Go to Fix Collapsible Tree Demo</a></li>
-	</ul>
-</p> -->
 <script src="resources/js/jquery-1.11.1.min.js"></script>
 <script>
 $(document).ready(function(){
 	$("#button").click(function () { 
-	    $("#frame").attr("src", $("#graphType").find(':selected').val() + "/index.html");
+		var graphTypeSelectionValue = $("#graphType").find(':selected').val();
+		var dataSetSelectionValue = $("#dataSet").find(':selected').val();
+		if (graphTypeSelectionValue != undefined && graphTypeSelectionValue != "" && dataSetSelectionValue != undefined && dataSetSelectionValue != ""){
+	    	$("#frame").attr("src", $("#graphType").find(':selected').val() + "/index.html");
+	    }
 	});
 	$("#graphType").change(function() {
 		$("#dataSet").empty();
@@ -48,17 +44,17 @@ function iframeLoaded(){
 
 <div id="menu" style="margin-bottom: 20px;border:2px inset;padding: 10px;">
 
-<div id="graphTypeMenu" style="display:inline-block;">
+<div id="graphTypeMenu" style="display:inline-block;margin-right: 10px;">
 	Select Graph Type:	
 	<select name="graphType" id="graphType">
 	  <option value=""></option>
 	  <option value="collapsibleTree">Collapsible Tree</option>
 	  <option value="fixCollapsibleTree">Fix Collapsible Tree</option>
-	  <option value="mindGapper">Dynamic Tree</option>
+	  <option value="mindGapper">Dynamic Graph</option>
 	</select>
 </div>
 
-<div id="dataSetMenu" style="display:inline-block">
+<div id="dataSetMenu" style="display:inline-block;margin-right: 10px;">
 	Select Dataset:	
 	<select name="dataSet" id="dataSet">
 	</select>

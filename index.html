@@ -4,7 +4,7 @@
 <title>SPI Demo</title>
 <style>
 
-@import url(../resources/css/style.css?aea6f0a);
+@import url(resources/css/style.css?aea6f0a);
 
 </style>
 
@@ -18,7 +18,7 @@
 		<li><a href="fixCollapsibleTree/index.html">Go to Fix Collapsible Tree Demo</a></li>
 	</ul>
 </p> -->
-<script src="../resources/js/jquery-1.11.1.min.js"></script>
+<script src="resources/js/jquery-1.11.1.min.js"></script>
 <script>
 $(document).ready(function(){
 	$("#button").click(function () { 
@@ -28,10 +28,10 @@ $(document).ready(function(){
 		$("#dataSet").empty();
 		var options = '';
         if ($(this).find(':selected').val() === 'mindGapper') {
-            options += "<option value='/resources/data/mindGapper/Kenya.json'>Metadata</option>";
+            options += "<option value='../resources/data/mindGapper/Kenya.json'>Metadata</option>";
         } else {
-            options += "<option value='/resources/data/dataElementsGroups/root.json'>Data Elements Groups</option>";
-            options += "<option value='/resources/data/collapsibleTree/root.json'>Countries</option>";
+            options += "<option value='../resources/data/dataElementsGroups/root.json'>Data Elements Groups</option>";
+            options += "<option value='../resources/data/collapsibleTree/root.json'>Countries</option>";
         }
         $("#dataSet").append(options);
  	    $("#dataSet").trigger('chosen:updated');

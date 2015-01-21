@@ -71,10 +71,8 @@ function key(d) { return d.name; }
 /////////////////////
 //Data Source
 //TODO: dataSource should be sent by parent web (index.html) and add a init function
-var dataSource = "../resources/data/mindGapper/Kenya.json";
-// var dataSource = "../resources/data/mindGapper/graphicDataComplete.json";
-//var dataSource = "../resources/data/mindGapper/graphicDataWithoutRadius.json";
-//var dataSource = "../resources/data/mindGapper/graphicDataWithoutRadiusAndColor.json";
+var dataSource = "../resources/data/mindGapper/root.json";
+//var dataSource = "../resources/data/mindGapper/Kenya.json";
 
 // Chart dimensions.
 var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
@@ -84,7 +82,8 @@ var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
 // Range for axis and radius    
 var xRange = [0, width],
     yRange = [height, 0],
-    radiusRange = [0, 40];
+    //radiusRange = [0, 40];
+    radiusRange = [0, 60];
     
 ///////////////////
 // END Constants //
@@ -108,7 +107,8 @@ var xDomain = [1110, 600000],
 var yDomain = [1, 155],
     yScaleType = d3.scale.linear();
     
-var radiusDomain = [17000, 30000],
+// var radiusDomain = [17000, 30000],
+var radiusDomain = [0, 30000],
 	radiusScaleType = d3.scale.linear();
 	
 var colorScaleType = d3.scale.category20c().domain(d3.range(0,20));

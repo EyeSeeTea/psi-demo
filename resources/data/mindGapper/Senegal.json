@@ -1,0 +1,60 @@
+{"Senegal":[
+	{
+		"period": "201311",
+		"dataelements": 26,
+		"datavalues": 7,
+		"datavaluesinserted": 0,
+		"organisationunits": 0
+	},
+	{
+		"period": "201312",
+		"dataelements": 0,
+		"datavalues": 21,
+		"datavaluesinserted": 0,
+		"organisationunits":0
+	},
+	{
+		"period": "201401",
+		"dataelements": 17,
+		"datavalues": 8555,
+		"datavaluesinserted": 237,
+		"organisationunits":10
+	},
+	{
+		"period": "201402",
+		"dataelements": 1,
+		"datavalues": 6063,
+		"datavaluesinserted": 118,
+		"organisationunits":7
+	},
+	{
+		"period": "201403",
+		"dataelements": 0,
+		"datavalues": 9017,
+		"datavaluesinserted": 12,
+		"organisationunits":3
+	},
+	{
+		"period": "201404",
+		"dataelements": 19,
+		"datavalues": 2624,
+		"datavaluesinserted": 508,
+		"organisationunits":33
+	},
+	{
+		"period": "201405",
+		"dataelements": 10,
+		"datavalues": 4300,
+		"datavaluesinserted": 14159,
+		"organisationunits":3024
+	},
+	{
+		"period": "201406",
+		"dataelements": 4,
+		"datavalues": 2340,
+		"datavaluesinserted": 3,
+		"organisationunits":1
+	}
+
+	]
+}

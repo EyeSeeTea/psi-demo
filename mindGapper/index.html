@@ -75,7 +75,7 @@ var dataSource = "../resources/data/mindGapper/root.json";
 //var dataSource = "../resources/data/mindGapper/Kenya.json";
 
 // Chart dimensions.
-var margin = {top: 19.5, right: 19.5, bottom: 19.5, left: 39.5},
+var margin = {top: 19.5, right: 19.5, bottom: 60, left: 60},
     width = 860 - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -104,7 +104,7 @@ var xVariableMetadata = {name: "Data Values Inserted", key: "datavaluesinserted"
 var xDomain = [1110, 600000],
     xScaleType = d3.scale.linear();
 
-var yDomain = [1, 155],
+var yDomain = [1, 500],
     yScaleType = d3.scale.linear();
     
 // var radiusDomain = [17000, 30000],
@@ -282,17 +282,20 @@ d3.json(dataSource, function(json) {
   		graphicData[key] = [];
   		//TODO: Specific for psi demo
   		var addedDataValuesInserted = 0;
+  		var addedDataElements = 0;
   		for (var subKey in json[key]){
   			var item = json[key][subKey];
   			var newitem = [];
   			
   			//TODO: Specific for psi demo
 		    addedDataValuesInserted += item[xVariableMetadata["key"]];
+		    addedDataElements += item[yVariableMetadata["key"]];
+		    console.log(key + addedDataElements);
 		    
   			newitem["radiusVariable"] = item[radiusVariableMetadata["key"]];
   			newitem["colorVariable"] = item[colorVariableMetadata["key"]];
   			newitem["xVariable"] = addedDataValuesInserted;
-  			newitem["yVariable"] = item[yVariableMetadata["key"]];
+  			newitem["yVariable"] = addedDataElements;
   			newitem["name"] = key;
   			newitem["year"] = item.period;
   			
